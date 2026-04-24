@@ -20,14 +20,19 @@ pub async fn run_worker(
 
         match req.send().await {
             Ok(resp) => {
+                let status = resp.status();
+                println!("STATUS: {}", status);
+
                 let latency = start.elapsed().as_millis();
-                if resp.status().is_success() {
+
+                if status.is_success() {
                     metrics.record_success(latency);
                 } else {
                     metrics.record_failure();
                 }
             }
-            Err(_) => {
+            Err(e) => {
+                println!("ERROR: {}", e);
                 metrics.record_failure();
             }
         }

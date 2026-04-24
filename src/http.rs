@@ -21,7 +21,10 @@ pub fn build_request(client: &Client, config: &Config) -> reqwest::RequestBuilde
     }
 
     if let Some(body) = &config.body {
-        req = req.body(body.clone());
+        let json: serde_json::Value = serde_json::from_str(body)
+            .expect("Invalid JSON body");
+
+        req = req.json(&json);
     }
 
     req
